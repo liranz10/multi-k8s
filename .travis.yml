@@ -1,0 +1,21 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t lzaltzberg/react-test -f ./client/Dockerfile.dev .
+
+script:
+  - docker run -e CI=true lzaltzberg/react-test npm run test
+after_success:
+  - docker build -t lzaltzberg/multi-client ./client
+  - docker build -t lzaltzberg/multi-nginx ./nginx
+  - docker build -t lzaltzberg/multi-server ./server
+  - docker build -t lzaltzberg/multi-worker ./worker
+  #log in to the docker CLI
+  - echo "$DOCKER_PASSWORD | docker login -u "$DOCKER_ID" --password-stdin
+  #take those images and push them to docker hub
+  - docker push lzaltzberg/multi-client
+  - docker push lzaltzberg/multi-nginx
+  - docker push lzaltzberg/multi-server
+  - docker push lzaltzberg/multi-worker
