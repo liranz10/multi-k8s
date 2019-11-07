@@ -6,7 +6,7 @@ before_install:
   - docker build -t lzaltzberg/react-test -f ./client/Dockerfile.dev .
 
 script:
-  - docker run -e CI=true lzaltzberg/react-test npm run test
+  - docker run -e CI=true lzaltzberg/react-test npm test
 after_success:
   - docker build -t lzaltzberg/multi-client ./client
   - docker build -t lzaltzberg/multi-nginx ./nginx
